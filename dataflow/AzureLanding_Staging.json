@@ -1,0 +1,37 @@
+{
+	"name": "AzureLanding_Staging",
+	"properties": {
+		"description": "Copy data from Landing to Staging\n\n\n",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DestinationDataset_1pv",
+						"type": "DatasetReference"
+					},
+					"name": "landingStream"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText1",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Select1"
+				},
+				{
+					"name": "MapDrifted1",
+					"description": "Creates an explicit mapping for each drifted column"
+				}
+			],
+			"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: true,\n\tignoreNoFilesFound: false,\n\twildcardPaths:['landing/*'],\n\tpartitionBy('hash', 1)) ~> landingStream\nlandingStream select(skipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> Select1\nSelect1 derive(name = toString(byName('name')),\n\t\tmpg = toString(byName('mpg')),\n\t\tcyl = toString(byName('cyl')),\n\t\tdisp = toString(byName('disp')),\n\t\thp = toString(byName('hp')),\n\t\tdrat = toString(byName('drat')),\n\t\twt = toString(byName('wt')),\n\t\tqsec = toString(byName('qsec')),\n\t\tvs = toString(byName('vs')),\n\t\tam = toString(byName('am')),\n\t\tgear = toString(byName('gear'),byName('gear')),\n\t\tcarb = toString(byName('carb')),\n\t\textraCol = toString(multiply(toFloat(byName('gear')),toFloat(byName('carb'))))) ~> MapDrifted1\nMapDrifted1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionBy('hash', 1),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sink1"
+		}
+	}
+}

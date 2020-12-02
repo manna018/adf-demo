@@ -1,0 +1,250 @@
+{
+	"name": "PersonalS3toPersonalAzure",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy_1pv",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [
+					{
+						"name": "Source",
+						"value": "axfood-poc//"
+					},
+					{
+						"name": "Destination",
+						"value": "axcontainer//"
+					}
+				],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AmazonS3ReadSettings",
+							"recursive": true,
+							"wildcardFolderPath": "input",
+							"wildcardFileName": "*"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".csv"
+						}
+					},
+					"enableStaging": false,
+					"validateDataConsistency": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "name",
+									"type": "String"
+								},
+								"sink": {
+									"name": "name",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "mpg",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "mpg",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "cyl",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "cyl",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "disp",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "disp",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "hp",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "hp",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "drat",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "drat",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "wt",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "wt",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "qsec",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "qsec",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "vs",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "vs",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "am",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "am",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "gear",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "gear",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "carb",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "carb",
+									"type": "Double"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "SourceDataset_1pv",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DestinationDataset_1pv",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "dataflow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "Copy_1pv",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "AzureLanding_Staging",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "slackAlert",
+				"type": "WebHook",
+				"dependsOn": [
+					{
+						"activity": "dataflow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://hooks.slack.com/services/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",
+					"method": "POST",
+					"body": {
+						"channel": "test-channel",
+						"text": "Data moved successfully"
+					},
+					"timeout": "00:00:03",
+					"reportStatusOnCallBack": false
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2020-11-30T07:18:15Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

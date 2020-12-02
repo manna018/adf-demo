@@ -1,0 +1,74 @@
+{
+	"name": "SourceDataset_1pv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AmazonS31",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AmazonS3Location",
+				"bucketName": "axfood-poc",
+				"folderPath": "input"
+			},
+			"columnDelimiter": ",",
+			"rowDelimiter": "\n",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "name",
+				"type": "String"
+			},
+			{
+				"name": "mpg",
+				"type": "String"
+			},
+			{
+				"name": "cyl",
+				"type": "String"
+			},
+			{
+				"name": "disp",
+				"type": "String"
+			},
+			{
+				"name": "hp",
+				"type": "String"
+			},
+			{
+				"name": "drat",
+				"type": "String"
+			},
+			{
+				"name": "wt",
+				"type": "String"
+			},
+			{
+				"name": "qsec",
+				"type": "String"
+			},
+			{
+				"name": "vs",
+				"type": "String"
+			},
+			{
+				"name": "am",
+				"type": "String"
+			},
+			{
+				"name": "gear",
+				"type": "String"
+			},
+			{
+				"name": "carb",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

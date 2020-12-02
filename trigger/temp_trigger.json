@@ -1,0 +1,25 @@
+{
+	"name": "temp_trigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PersonalS3toPersonalAzure",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 2,
+				"startTime": "2020-11-30T09:43:00",
+				"endTime": "2020-11-30T09:48:00",
+				"timeZone": "India Standard Time"
+			}
+		}
+	}
+}
